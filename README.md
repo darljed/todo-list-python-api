@@ -22,11 +22,25 @@ A simple todo-list application created as a requirement for engineering exam.
 
 # Software Requirements
 
-- Requires python version 3.7 and above (Tested and developed on Python 3.9)
+- Requires python version 3.7 and above (Tested and developed on Python 3.9 on windows 11)
 - Modules listed on requirements.txt
 
 ### Installation of dependency modules
 
 ```bash
 pip install -r requirements.txt
+```
+
+# Initializing and Starting the Application
+
+Initialize database and creating database tables
+
+```bash
+python db-init.py
+```
+
+Start the application by running the main application: todolist-app.py
+
+```bash
+python todolist-app.py
 ```
