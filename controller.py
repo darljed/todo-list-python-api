@@ -22,23 +22,46 @@ class AuthRegister(Resource):
     
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', required=True, type=str, location="args")
-        parser.add_argument('password', required=True, type=str, location="args")
-        args = parser.parse_args()
+        # parser.add_argument('username', required=True, type=str, location="args")
+        # parser.add_argument('password', required=True, type=str, location="args")
+        # args = parser.parse_args()
+        
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if(username == None or password == None):
+            return {
+                'message':{
+                    'status':'failed',
+                    'content': 'registration failed. Username or Password cannot be blank.'
+                },
+                'code': 200
+            }, 200
         
         user = User()
-        message = user.create_user(args['username'],args['password'])
+        message = user.create_user(username,password)
         return message , message['code']
 
 class AuthLogin(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', required=True, type=str, location="args")
-        parser.add_argument('password', required=True, type=str, location="args")
-        args = parser.parse_args()
+        # parser.add_argument('username', required=True, type=str, location="args")
+        # parser.add_argument('password', required=True, type=str, location="args")
+        # args = parser.parse_args()
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if(username == None or password == None):
+            return {
+                'message':{
+                    'status':'failed',
+                    'content': 'Login Failed. Username or password cannot be blank.'
+                },
+                'code': 403
+            }, 403
         
         user = User()
-        res = user.user_login(args['username'],args['password'])
+        res = user.user_login(username,password)
         if res:
             return {'message': res,
             'code': 200},200
