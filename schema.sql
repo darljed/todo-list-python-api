@@ -25,13 +25,13 @@ CREATE TABLE sessions (
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
-
+-- sample data 
 -- Users 
-INSERT INTO users (username,password) VALUES ("test1","cGFzc3dvcmQx");
-INSERT INTO users (username,password) VALUES ("test2","cGFzc3dvcmQy");
+INSERT INTO users (username,password) VALUES ("test1","cGFzc3dvcmQx"); -- Password: password1 | note that the password is encrypted. 
+INSERT INTO users (username,password) VALUES ("test2","cGFzc3dvcmQy"); -- Password: password2 | note that the password is encrypted. 
 
 -- Tasks 
 
 INSERT INTO tasks (task,sort_index,user_id) VALUES ("buy milk",0,1);
-INSERT INTO tasks (task,sort_index,user_id) VALUES ("create proposal for client A",1,1);
+INSERT INTO tasks (task,sort_index,user_id) VALUES ("create proposal for client Co.Bus.",1,1);
 INSERT INTO tasks (task,sort_index,user_id) VALUES ("water the plants",2,1);

@@ -1,5 +1,5 @@
 import sqlite3
-from controller import Connection
+from model import Connection
 
 class DBINIT:
     def __init__(self) -> None:
