@@ -13,5 +13,8 @@ AUTH_URLS = {
 
 TASK_URLS = {
     'TaskList':'/task/list',
-    'TaskCreate':'/task/create'
+    'TaskCreate':'/task/create',
+    'TaskView':'/task/view/<int:task_id>',
+    'TaskUpdate':'/task/update/<int:task_id>',
+    'TaskDelete':'/task/delete/<int:task_id>'
 }

@@ -76,15 +76,15 @@ class AuthLogin(Resource):
 class TaskList(Resource):
     def get(self):
 
-        headers = request.headers.get('Content-Type')
-        test = request.form.get('test')
-        authorization = request.headers.get('Authorization')
+        # headers = request.headers.get('Content-Type')
+        # test = request.form.get('test')
+        # authorization = request.headers.get('Authorization')
 
         user_id = Auth(request).validate()
         task = Task(user_id)
         tasklist = []
         for item in task.get_tasks():
-            tasklist.append({'id': item[0], 'task': item[1], 'test': test})
+            tasklist.append({'id': item[0], 'task': item[1]})
 
 
         return {
@@ -92,6 +92,34 @@ class TaskList(Resource):
         "tasks": tasklist
          } , 200
 
-class TaskView(Resource):
-    pass
+class TaskCreate(Resource):
+    def post(self):
+        user_id = Auth(request).validate()
+        task = request.form.get('task')
+        taskObj = Task(user_id)
+        res = taskObj.create_task(task)
+        return res, res['code']
 
+class TaskView(Resource):
+    def post(self,task_id):
+        user_id = Auth(request).validate()
+        task = Task(user_id)
+        res = task.view_task(task_id)
+        return res, res['code']
+
+
+class TaskUpdate(Resource):
+    def post(self,task_id):
+        user_id = Auth(request).validate()
+        newtask = request.form.get('task')
+        task = Task(user_id)
+        res = task.update_task(task_id,newtask)
+        return res, res['code']
+
+
+class TaskDelete(Resource):
+    def delete(self,task_id):
+        user_id = Auth(request).validate()
+        task = Task(user_id)
+        res = task.delete_task(task_id)
+        return res, res['code']

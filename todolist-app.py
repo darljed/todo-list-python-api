@@ -19,6 +19,10 @@ api.add_resource(controller.AuthLogin,AUTH_URLS['AuthLogin'])
 
 # AUTH NEEDED ENDPOINTS 
 api.add_resource(controller.TaskList,TASK_URLS['TaskList'])
+api.add_resource(controller.TaskCreate,TASK_URLS['TaskCreate'])
+api.add_resource(controller.TaskView,TASK_URLS['TaskView'])
+api.add_resource(controller.TaskUpdate,TASK_URLS['TaskUpdate'])
+api.add_resource(controller.TaskDelete,TASK_URLS['TaskDelete'])
 
 
 if __name__ == "__main__":

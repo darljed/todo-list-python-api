@@ -176,6 +176,93 @@ class Task:
         tasks = cur.execute('SELECT task_id, task FROM tasks WHERE (user_id=?)',(self.user_id,)).fetchall()
         return tasks
 
+    def create_task(self,task):
+        if task:
+            cur = self.connection.cursor()
+            cur.execute('INSERT INTO tasks (task, user_id, sort_index) VALUES (?, ?, 1)',(task, self.user_id))
+            self.connection.commit()
+            return {
+                'message':{
+                    'status':'success',
+                    'content':'A new task has been added'
+                },
+                'code': 201
+            }
+        else:
+            return {
+                'message':{
+                    'status':'failed',
+                    'content':'Failed to add new task. Task cannot be empty.'
+                },
+                'code': 200
+            }
+
+    def view_task(self,task_id):
+        if task_id:
+            cur = self.connection.cursor()
+            task_details = cur.execute('SELECT task, sort_index FROM tasks WHERE (task_id=? AND user_id=?) ',(task_id,self.user_id)).fetchall()
+
+            if(len(task_details)>0):
+                return {
+                    'task':{
+                        'id': task_id,
+                        'task': task_details[0][0],
+                        'sort_index':task_details[0][1]
+                    },
+                    'code': 200
+                }
+            else:
+                abort(403)
+        else:
+            abort(403)
+
+    def update_task(self,task_id,task):
+        if task:
+            cur = self.connection.cursor()
+            cur.execute(f'UPDATE tasks SET task="{task}" WHERE (task_id={task_id} AND user_id={self.user_id})')
+            self.connection.commit()
+            affected_rows = self.connection.total_changes
+            if(affected_rows >= 1):
+                return {
+                    'message':{
+                        'status':'success',
+                        'content':f'task (id:{task_id}) has been successfully updated.',
+                        'task_id':task_id
+                    },
+                    'code': 200
+                }
+            else:
+                abort(403)
+        else:
+            return {
+                'message':{
+                    'status':'failed',
+                    'content':f'Failed to update task (id:{task_id}). New task content cannot be empty',
+                },
+                'code': 200
+            }
+        
+        
+    def delete_task(self,task_id):
+        cur = self.connection.cursor()
+        cur.execute(f'DELETE FROM tasks WHERE (task_id={task_id} AND user_id={self.user_id})')
+        self.connection.commit()
+        affected_rows = self.connection.total_changes
+        if(affected_rows >= 1):
+            return {
+                'message':{
+                    'status':'success',
+                    'content':f'task (id:{task_id}) has been successfully deleted.',
+                    'task_id':task_id
+                },
+                'code': 200
+            }
+        else:
+            abort(403)
+
+
+
+
 class Auth:
     def __init__(self,request):
         self.request = request
