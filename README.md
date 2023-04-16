@@ -104,7 +104,7 @@ Successful login will return a session key. Use the session key to authenticate 
 
 ## Task List (/task/list)
 
-Endpoint for creating user account.
+Endpoint for listing all current user's tasks.
 
 ### GET
 
@@ -112,7 +112,7 @@ Endpoint for creating user account.
 
 - None
 
-#### Authentication
+#### Requires Authentication
 
 Set `Authorization` header to `Key <sessionKey>`
 
@@ -150,5 +150,41 @@ Successful requests returns an object of tasks for the authenticated user.
         }
     ],
     "code": 200
+}
+```
+
+## Create a task (/task/create)
+
+Endpoint for creating a new task for the current authenticated user.
+
+### POST
+
+#### Arguments
+
+- task (String)
+
+#### Requires Authentication
+
+Set `Authorization` header to `Key <sessionKey>`
+
+Example:
+
+`'Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d'`
+
+Example: 
+
+```curl
+curl -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/create -d task="Just some task here"
+```
+
+#### Response
+
+```bash
+{
+    "message": {
+        "status": "success",
+        "content": "A new task has been added"
+    },
+    "code": 201
 }
 ```
