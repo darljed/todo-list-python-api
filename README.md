@@ -44,3 +44,111 @@ Start the application by running the main application: todolist-app.py
 ```bash
 python todolist-app.py
 ```
+
+# Usage Example
+
+## Register (/auth/register)
+
+Endpoint for creating user account.
+
+### POST
+
+#### Arguments
+- username (String)  
+- password (String) 
+
+Example: 
+
+```curl
+curl -k -X POST http://localhost:5000/auth/register -d username=johny.dela.cruz -d password=averylongpassword
+```
+
+## Login (/auth/login)
+
+Endpoint for authenticating users using username and password.
+
+### POST
+
+#### Arguments
+- username (String)  
+- password (String) 
+
+Example: 
+
+```curl
+curl -k -X POST http://localhost:5000/auth/login -d username=john.dela.cruz -d password=averylongpassword
+```
+
+#### Response
+
+Successful login will return a session key. Use the session key to authenticate succceeding task related requests.
+
+```bash
+{
+    "message": {
+        "status": "success",
+        "session_key": "a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d",
+        "urls": {
+            "TaskList": "/task/list",
+            "TaskCreate": "/task/create",
+            "TaskView": "/task/view/<int:task_id>",
+            "TaskUpdate": "/task/update/<int:task_id>",
+            "TaskDelete": "/task/delete/<int:task_id>",
+            "TaskSetSortIndex": "/task/sort/set/<int:task_id>/",
+            "TaskSetSortBulk": "/task/sort/set/bulk"
+        }
+    },
+    "code": 200
+}
+```
+
+## Task List (/task/list)
+
+Endpoint for creating user account.
+
+### GET
+
+#### Arguments
+
+- None
+
+#### Authentication
+
+Set `Authorization` header to `Key <sessionKey>`
+
+Example:
+
+`'Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d'`
+
+Example: 
+
+```curl
+curl -k -X GET -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/list
+```
+
+#### Response
+
+Successful requests returns an object of tasks for the authenticated user.
+
+```bash
+{
+    "tasks": [
+        {
+            "id": 1,
+            "task": "buy milk",
+            "sort_index": 0
+        },
+        {
+            "id": 2,
+            "task": "create proposal for client Co.Bus.",
+            "sort_index": 1
+        },
+        {
+            "id": 3,
+            "task": "water the plants",
+            "sort_index": 2
+        }
+    ],
+    "code": 200
+}
+```
