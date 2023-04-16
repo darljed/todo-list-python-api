@@ -173,13 +173,114 @@ class Task:
 
     def get_tasks(self):
         cur = self.connection.cursor()
-        tasks = cur.execute('SELECT task_id, task FROM tasks WHERE (user_id=?)',(self.user_id,)).fetchall()
+        tasks = cur.execute('SELECT task_id, task, sort_index FROM tasks WHERE (user_id=?) ORDER BY sort_index ASC',(self.user_id,)).fetchall()
         return tasks
+
+    def new_sort_index(self):
+        cur = self.connection.cursor()
+        sort_idx = 0
+        sort_indexes = cur.execute('SELECT sort_index FROM tasks WHERE (user_id=?) ORDER BY sort_index DESC',(self.user_id,)).fetchall()
+        print(sort_indexes)
+        if(len(sort_indexes)>0):
+            sort_idx = sort_indexes[0][0] + 1
+        return sort_idx
+    
+    def bulk_sort_change(self,task_ids_list):
+        cur = self.connection.cursor()
+        sort_indexes = cur.execute('SELECT sort_index FROM tasks WHERE (user_id=?) ORDER BY sort_index DESC',(self.user_id,)).fetchall()
+        if len(sort_indexes) > 0:
+            # check if count of provided task ids match 
+            if len(sort_indexes) == len(task_ids_list):
+                idx = 0
+                for item in task_ids_list:
+                    cur.execute(f'UPDATE tasks SET sort_index={idx} WHERE (user_id={self.user_id} AND task_id={item})')
+                    print(self.connection.total_changes)
+                    if(not self.connection.total_changes == idx + 1):
+                        abort(403)
+                    idx = idx + 1
+                self.connection.commit()
+                return {
+                    'message':{
+                        'status': 'success',
+                        'tasks': self.get_tasks()
+                    }
+                }
+            else:
+                return {
+                'message':{
+                    'status':'failed',
+                    'content':'Failed to update sorting position. Total number of tasks do not match with the total number of provided task ids.'
+                },
+                'code': 200
+            }
+        else:
+            abort(403)
+
+    def change_sort_index(self,id,new_sort_index):
+        if(id and new_sort_index):
+            
+            cur = self.connection.cursor()
+            new_sort_index = int(new_sort_index)
+
+            # set minimum index number
+            if(new_sort_index < 0):
+                new_sort_index = 0
+            # set maximum index number
+            max_idx = cur.execute('SELECT sort_index FROM tasks WHERE (user_id=? ) ORDER BY sort_index DESC',(self.user_id,)).fetchall()
+            if len(max_idx) > 0 :
+                max_id = max_idx[0][0]
+                if(new_sort_index > max_id):
+                    new_sort_index = max_id
+
+                sort_idx = 0
+
+                task_details = self.view_task(id)['task']
+
+                if(task_details['sort_index'] < new_sort_index):
+                    items = cur.execute('SELECT task_id, sort_index FROM tasks WHERE (user_id=? AND sort_index <= ?) ORDER BY sort_index DESC',(self.user_id,new_sort_index)).fetchall()
+                    for item in items:
+                        task_id = item[0]
+                        srt_idx = item[1]
+                        if  srt_idx > task_details['sort_index']:
+                            new_index = srt_idx - 1
+                            cur.execute(f'UPDATE tasks SET sort_index={new_index} WHERE (user_id={self.user_id} AND task_id={task_id})')
+                    cur.execute((f'UPDATE tasks SET sort_index={new_sort_index} WHERE (user_id={self.user_id} AND task_id={id})'))
+
+                else:
+                    items = cur.execute('SELECT task_id FROM tasks WHERE (user_id=? AND sort_index >= ?) ORDER BY sort_index ASC',(self.user_id,new_sort_index)).fetchall()
+                    new_index =  int(new_sort_index)
+                    for item in items:
+                        task_id = item[0]
+                        if not task_id == id:
+                            new_index = new_index + 1
+                            print(task_id)
+                            cur.execute(f'UPDATE tasks SET sort_index={new_index} WHERE (user_id={self.user_id} AND task_id={task_id})')
+                    cur.execute((f'UPDATE tasks SET sort_index={new_sort_index} WHERE (user_id={self.user_id} AND task_id={id})'))
+
+                self.connection.commit()
+                print(self.connection.total_changes)
+                return {
+                    'status': 'success',
+                    'message':{
+                        'tasks': self.get_tasks()
+                    }
+                }
+            else:
+                abort(403)
+        else:
+            return {
+                'message':{
+                    'status':'failed',
+                    'content':'Failed to update task. sort_index cannot be empty.'
+                },
+                'code': 200
+            }
 
     def create_task(self,task):
         if task:
             cur = self.connection.cursor()
-            cur.execute('INSERT INTO tasks (task, user_id, sort_index) VALUES (?, ?, 1)',(task, self.user_id))
+            sort_idx = self.new_sort_index()
+            cur.execute('INSERT INTO tasks (task, user_id, sort_index) VALUES (?, ?, ?)',(task, self.user_id, sort_idx))
             self.connection.commit()
             return {
                 'message':{

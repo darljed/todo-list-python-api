@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from model import User, Task, Auth
 from flask import request
+import json
 
 class Helper:
     def msg(self,message,statuscode=None,options=None,status=None):
@@ -123,3 +124,20 @@ class TaskDelete(Resource):
         task = Task(user_id)
         res = task.delete_task(task_id)
         return res, res['code']
+
+class TaskSetSortIndex(Resource):
+    def post(self,task_id):
+        user_id = Auth(request).validate()
+        sort_index = request.form.get('sort_index')
+        task = Task(user_id)
+        res = task.change_sort_index(task_id,sort_index)
+        return res
+
+class TaskSetSortBulk(Resource):
+    def post(self):
+        user_id = Auth(request).validate()
+        sort_indexes = request.form.get('task_ids')
+        sort_indexes = json.loads(sort_indexes)
+        task = Task(user_id)
+        res = task.bulk_sort_change(sort_indexes)
+        return res

@@ -23,6 +23,8 @@ api.add_resource(controller.TaskCreate,TASK_URLS['TaskCreate'])
 api.add_resource(controller.TaskView,TASK_URLS['TaskView'])
 api.add_resource(controller.TaskUpdate,TASK_URLS['TaskUpdate'])
 api.add_resource(controller.TaskDelete,TASK_URLS['TaskDelete'])
+api.add_resource(controller.TaskSetSortIndex,TASK_URLS['TaskSetSortIndex'])
+api.add_resource(controller.TaskSetSortBulk,TASK_URLS['TaskSetSortBulk'])
 
 
 if __name__ == "__main__":
