@@ -44,16 +44,26 @@ Start the application by running the main application: todolist-app.py
 ```bash
 python todolist-app.py
 ```
+# Authentication
 
-# Usage Example
+Authentication can be done using a session key. Login using the [login](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#login-authlogin) endpoint `/auth/login`. Successfull login will return a session key. 
+
+The session key will be used to authenticate the succeeding request for task management by setting `Authorization` header to `Key <sessionKey>`
+
+Example:
+
+`'Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d'`
+
+
+# Endpoints
 
 ## Register (/auth/register)
 
-Endpoint for creating user account.
+Endpoint for creating new user account.
 
 ### POST
 
-#### Arguments
+#### Request Parameters
 - username (String)  
 - password (String) 
 
@@ -69,19 +79,23 @@ Endpoint for authenticating users using username and password.
 
 ### POST
 
-#### Arguments
+#### Request Parameters
 - username (String)  
 - password (String) 
 
 Example: 
 
+| username | password |
+| ----------- | ----------- |
+| test1 | password1 |
+
 ```curl
-curl -k -X POST http://localhost:5000/auth/login -d username=john.dela.cruz -d password=averylongpassword
+curl -k -X POST http://localhost:5000/auth/login -d username=test1 -d password=password1
 ```
 
 #### Response
 
-Successful login will return a session key. Use the session key to authenticate succceeding task related requests.
+Successful login will return a session key. Use the session key to authenticate the succceeding task-related requests.
 
 ```bash
 {
@@ -108,17 +122,11 @@ Endpoint for listing all current user's tasks.
 
 ### GET
 
-#### Arguments
+#### Request Parameters
 
 - None
 
-#### Requires Authentication
-
-Set `Authorization` header to `Key <sessionKey>`
-
-Example:
-
-`'Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d'`
+### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
 
 Example: 
 
@@ -159,17 +167,11 @@ Endpoint for creating a new task for the current authenticated user.
 
 ### POST
 
-#### Arguments
+#### Request Parameters
 
 - task (String)
 
-#### Requires Authentication
-
-Set `Authorization` header to `Key <sessionKey>`
-
-Example:
-
-`'Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d'`
+### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
 
 Example: 
 
@@ -186,5 +188,198 @@ curl -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8
         "content": "A new task has been added"
     },
     "code": 201
+}
+```
+## View task (/task/view/{task_id})
+
+Endpoint for viewing details for a specific task.
+
+### GET
+
+#### Request Parameters
+
+- None
+
+### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+
+Example: 
+
+```curl
+curl -k -X GET -H "Authorization: Key a4e027a65da0b70ba5cb74389c94c31a7b111f5b2c9a62fb" http://localhost:5000/task/view/1
+```
+
+#### Response
+
+```curl 
+{
+    "task": {
+        "id": 1,
+        "task": "buy milk",
+        "sort_index": 0
+    },
+    "code": 200
+}
+```
+
+## Update a task (/task/update/{task_id})
+
+Endpoint for updating a specific task of the current authenticated user.
+
+### POST
+
+#### Request Parameters
+
+- task (String)
+
+### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+
+Example: 
+
+```curl
+curl -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/update/4 -d task="Send quotation to client abc"
+```
+
+#### Response
+
+```bash
+{
+    "message": {
+        "status": "success",
+        "content": "task (id:4) has been successfully updated.",
+        "task_id": 4
+    },
+    "code": 200
+}
+```
+
+## Delete a task (/task/delete/{task_id})
+
+Endpoint for removing a specific task of the current authenticated user.
+
+### DELETE
+
+#### Request Parameters
+
+- None
+
+### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+
+Example: 
+
+```curl
+curl -k -X DELETE -H "Authorization: Key a4e027a65da0b70ba5cb74389c94c31a7b111f5b2c9a62fb" http://localhost:5000/task/delete/4
+```
+
+#### Response
+
+```bash
+{
+    "message": {
+        "status": "success",
+        "content": "task (id:4) has been successfully deleted.",
+        "task_id": 4
+    },
+    "code": 200
+}
+```
+
+## Set sort task position (/task/sort/set/{task_id})
+
+Endpoint for setting a new sorting position to a specific task of the current authenticated user.
+
+### POST
+
+#### Request Parameters
+
+- sort_index (Integer)
+
+### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+
+Example: 
+
+```curl
+curl --location -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/sort/set/1 -d sort_index=2
+```
+
+#### Response
+
+```bash
+{
+    "status": "success",
+    "message": {
+        "task_fields": [
+            "task_id",
+            "task",
+            "sort_index"
+        ],
+        "tasks": [
+            [
+                2,
+                "create proposal for client Co.Bus.",
+                0
+            ],
+            [
+                3,
+                "water the plants",
+                1
+            ],
+            [
+                1,
+                "buy milk",
+                2
+            ]
+        ]
+    },
+    "code": 200
+}
+```
+
+## Bulk set task sort position (/task/sort/set/bulk)
+
+Endpoint for setting a new sorting position to all tasks for current authenticated user.
+
+### POST
+
+#### Request Parameters
+
+- task_ids (Array) - Example: `[2,1,3]`. Task IDs count must match the count of tasks. Task IDs listed must be owned by the current authenticated user.
+
+### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+
+Example: 
+
+```curl
+curl --location -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/sort/set/bulk -d task_ids="[3,2,1]"
+```
+
+#### Response
+
+```bash
+{
+    "message": {
+        "status": "success",
+        "task_fields": [
+            "task_id",
+            "task",
+            "sort_index"
+        ],
+        "tasks": [
+            [
+                3,
+                "water the plants",
+                0
+            ],
+            [
+                2,
+                "create proposal for client Co.Bus.",
+                1
+            ],
+            [
+                1,
+                "buy milk",
+                2
+            ]
+        ]
+    }
 }
 ```
