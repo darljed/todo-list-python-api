@@ -50,6 +50,8 @@ Authentication can be done using a session key. Login using the [login](https://
 
 The session key will be used to authenticate the succeeding request for task management by setting `Authorization` header to `Key <sessionKey>`
 
+Each session key expires after 10 minutes of inactivity.
+
 Example:
 
 `'Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d'`
@@ -95,7 +97,7 @@ curl -k -X POST http://localhost:5000/auth/login -d username=test1 -d password=p
 
 #### Response
 
-Successful login will return a session key. Use the session key to authenticate the succceeding task-related requests.
+Successful login will return a session key. Use the session key to authenticate the succceeding task-related requests. See [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication) section for more details.
 
 ```bash
 {
@@ -131,7 +133,7 @@ Endpoint for listing all current user's tasks.
 Example: 
 
 ```curl
-curl -k -X GET -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/list
+curl -k -X GET -H "Authorization: Key {add_session_key_here}" http://localhost:5000/task/list
 ```
 
 #### Response
@@ -176,7 +178,7 @@ Endpoint for creating a new task for the current authenticated user.
 Example: 
 
 ```curl
-curl -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/create -d task="Just some task here"
+curl -k -X POST -H "Authorization: Key {add_session_key_here}" http://localhost:5000/task/create -d task="Just some task here"
 ```
 
 #### Response
@@ -205,7 +207,7 @@ Endpoint for viewing details for a specific task.
 Example: 
 
 ```curl
-curl -k -X GET -H "Authorization: Key a4e027a65da0b70ba5cb74389c94c31a7b111f5b2c9a62fb" http://localhost:5000/task/view/1
+curl -k -X GET -H "Authorization: Key {add_session_key_here}" http://localhost:5000/task/view/1
 ```
 
 #### Response
@@ -236,7 +238,7 @@ Endpoint for updating a specific task of the current authenticated user.
 Example: 
 
 ```curl
-curl -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/update/4 -d task="Send quotation to client abc"
+curl -k -X POST -H "Authorization: Key {add_session_key_here}" http://localhost:5000/task/update/4 -d task="Send quotation to client abc"
 ```
 
 #### Response
@@ -267,7 +269,7 @@ Endpoint for removing a specific task of the current authenticated user.
 Example: 
 
 ```curl
-curl -k -X DELETE -H "Authorization: Key a4e027a65da0b70ba5cb74389c94c31a7b111f5b2c9a62fb" http://localhost:5000/task/delete/4
+curl -k -X DELETE -H "Authorization: Key {add_session_key_here}" http://localhost:5000/task/delete/4
 ```
 
 #### Response
@@ -298,7 +300,7 @@ Endpoint for setting a new sorting position to a specific task of the current au
 Example: 
 
 ```curl
-curl --location -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/sort/set/1 -d sort_index=2
+curl --location -k -X POST -H "Authorization: Key {add_session_key_here}" http://localhost:5000/task/sort/set/1 -d sort_index=2
 ```
 
 #### Response
@@ -349,7 +351,7 @@ Endpoint for setting a new sorting position to all tasks for current authenticat
 Example: 
 
 ```curl
-curl --location -k -X POST -H "Authorization: Key a1d29210e41aade4a0fcbc38ba7842b4e9b7e2be8475ae8d" http://localhost:5000/task/sort/set/bulk -d task_ids="[3,2,1]"
+curl --location -k -X POST -H "Authorization: Key {add_session_key_here}" http://localhost:5000/task/sort/set/bulk -d task_ids="[3,2,1]"
 ```
 
 #### Response
