@@ -1,29 +1,31 @@
 from flask import Flask
-from flask_restful import Resource, Api, reqparse
-import ast, jsonify
+from flask_restful import Api
+from config import AUTH_URLS, TASK_URLS
+import controller
+
 
 app = Flask(__name__)
 api = Api(app)
-print("test")
 
-class Auth(Resource):
-    
-    def get(self):
-        res = {
-            'message':'Hey! Im just checking out the response. '
-        }
-        return {'response': res}, 200
-
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('username', required=True, type=str, location="args")
-        parser.add_argument('password', required=True, type=str, location="args")
-        args = parser.parse_args()
-        return {"username":args['username'], "password":args['password']}, 200 
+# ERROR HANDLERS
+@app.errorhandler(404) 
+def invalid_route(e): 
+    return {'message': 'Invalid route.', 'code': 404} , 404
 
 
+# ENDPOINTS
+api.add_resource(controller.AuthRegister,AUTH_URLS['AuthRegister'])
+api.add_resource(controller.AuthLogin,AUTH_URLS['AuthLogin'])
 
-api.add_resource(Auth,'/auth')
+# AUTH NEEDED ENDPOINTS 
+api.add_resource(controller.TaskList,TASK_URLS['TaskList'])
+api.add_resource(controller.TaskCreate,TASK_URLS['TaskCreate'])
+api.add_resource(controller.TaskView,TASK_URLS['TaskView'])
+api.add_resource(controller.TaskUpdate,TASK_URLS['TaskUpdate'])
+api.add_resource(controller.TaskDelete,TASK_URLS['TaskDelete'])
+api.add_resource(controller.TaskSetSortIndex,TASK_URLS['TaskSetSortIndex'])
+api.add_resource(controller.TaskSetSortBulk,TASK_URLS['TaskSetSortBulk'])
+
 
 if __name__ == "__main__":
     app.run(debug=True)
