@@ -65,7 +65,7 @@ python todolist-app.py
 ```
 # Authentication
 
-Authentication can be done using a session key. Login using the [login](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#login-authlogin) endpoint `/auth/login`. Successfull login will return a session key. 
+Authentication can be done using a session key. Login using the [login](#login-authlogin) endpoint `/auth/login`. Successfull login will return a session key. 
 
 The session key will be used to authenticate the succeeding request for task management by setting `Authorization` header to `Key <sessionKey>`
 
@@ -116,7 +116,7 @@ curl -k -X POST http://localhost:5000/auth/login -d username=test1 -d password=p
 
 #### Response
 
-Successful login will return a session key. Use the session key to authenticate the succceeding task-related requests. See [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication) section for more details.
+Successful login will return a session key. Use the session key to authenticate the succceeding task-related requests. See [Authentication](#authentication) section for more details.
 
 ```bash
 {
@@ -147,7 +147,7 @@ Endpoint for listing all current user's tasks.
 
 - None
 
-### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+### Requires [Authentication](#authentication)
 
 Example: 
 
@@ -192,7 +192,7 @@ Endpoint for creating a new task for the current authenticated user.
 
 - task (String)
 
-### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+### Requires [Authentication](#authentication)
 
 Example: 
 
@@ -221,7 +221,7 @@ Endpoint for viewing details for a specific task.
 
 - None
 
-### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+### Requires [Authentication](#authentication)
 
 Example: 
 
@@ -252,7 +252,7 @@ Endpoint for updating a specific task of the current authenticated user.
 
 - task (String)
 
-### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+### Requires [Authentication](#authentication)
 
 Example: 
 
@@ -283,7 +283,7 @@ Endpoint for removing a specific task of the current authenticated user.
 
 - None
 
-### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+### Requires [Authentication](#authentication)
 
 Example: 
 
@@ -314,7 +314,7 @@ Endpoint for setting a new sorting position to a specific task of the current au
 
 - sort_index (Integer)
 
-### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+### Requires [Authentication](#authentication)
 
 Example: 
 
@@ -365,7 +365,7 @@ Endpoint for setting a new sorting position to all tasks for current authenticat
 
 - task_ids (Array) - Example: `[2,1,3]`. Task IDs count must match the count of tasks. Task IDs listed must be owned by the current authenticated user.
 
-### Requires [Authentication](https://github.com/darljed/todo-list-python-api/edit/dev/README.md#authentication)
+### Requires [Authentication](#authentication)
 
 Example: 
 
