@@ -39,6 +39,25 @@ Initialize database and creating database tables
 python db-init.py
 ```
 
+This command executes a script that will initialize and create the database locally. It also creates sample data for the tables. 
+
+### Sample Data
+
+#### Users
+
+| username | password |
+|----------|----------|
+|test1|password1|
+|test2|password2|
+
+#### Tasks
+
+| task_id | task | sort_index | user_id |
+|----------|----------|----------|----------|
+|1|buy milk|0|1|
+|2|create proposal for client Co.Bus.|1|1|
+|3|water the plants|2|1|
+
 Start the application by running the main application: todolist-app.py
 
 ```bash
