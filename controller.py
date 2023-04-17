@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from model import User, Task, Auth
 from flask import request
-import json
+import json, re
 
 class Helper:
     def msg(self,message,statuscode=None,options=None,status=None):
@@ -29,12 +29,32 @@ class AuthRegister(Resource):
         
         username = request.form.get('username')
         password = request.form.get('password')
-
+        print(username)
         if(username == None or password == None):
             return {
                 'message':{
                     'status':'failed',
                     'content': 'registration failed. Username or Password cannot be blank.'
+                },
+                'code': 200
+            }, 200
+        
+        
+        # validate username 
+        if not bool(re.match('^[a-zA-Z0-9.-_]*$',username)):
+            return {
+                'message':{
+                    'status':'failed',
+                    'content': 'registration failed. Username should only contain numbers, letters, period, underscores and dash'
+                },
+                'code': 200
+            }, 200
+        
+        if bool(re.match('\'\"',username)):
+            return {
+                'message':{
+                    'status':'failed',
+                    'content': 'registration failed. Password cannot contain quotations'
                 },
                 'code': 200
             }, 200
@@ -85,12 +105,12 @@ class TaskList(Resource):
         task = Task(user_id)
         tasklist = []
         for item in task.get_tasks():
-            tasklist.append({'id': item[0], 'task': item[1]})
+            tasklist.append({'id': item[0], 'task': item[1], 'sort_index': item[2]})
 
 
         return {
-        "test":"test message", 
-        "tasks": tasklist
+        "tasks": tasklist,
+        'code': 200
          } , 200
 
 class TaskCreate(Resource):
@@ -102,7 +122,7 @@ class TaskCreate(Resource):
         return res, res['code']
 
 class TaskView(Resource):
-    def post(self,task_id):
+    def get(self,task_id):
         user_id = Auth(request).validate()
         task = Task(user_id)
         res = task.view_task(task_id)

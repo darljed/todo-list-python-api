@@ -14,13 +14,13 @@ class User:
 
     def get_user_count_byusername(self,username):
         cur = self.connection.cursor()
-        result = cur.execute("SELECT COUNT(username) FROM users WHERE (`username`='{0}');".format(username))
+        result = cur.execute("""SELECT COUNT(username) FROM users WHERE (`username`=?);""",(username,))
         count = cur.fetchone()[0]
         return count
 
     def get_user_details_byusername(self,username):
         cur = self.connection.cursor()
-        result = cur.execute("SELECT * FROM users WHERE (`username`='{0}');".format(username)).fetchall()
+        result = cur.execute("SELECT * FROM users WHERE (`username`=?);",(username,)).fetchall()
         return result
 
     def user_exists(self,username):
@@ -35,7 +35,7 @@ class User:
             # encode password 
             password = base64.b64encode(password.encode("ascii","strict"))  
             cur = self.connection.cursor()
-            cur.execute("INSERT INTO users (username,password) VALUES (?, ?) ",
+            cur.execute("""INSERT INTO users (username,password) VALUES (?, ?) """,
             (username,password))
             self.connection.commit()
 
@@ -57,7 +57,6 @@ class User:
         if self.user_exists(username):
             user = self.get_user_details_byusername(username)
             user_id=user[0][0]
-            dbusername=user[0][1]
             dbpassword=base64.b64decode(user[0][2])
             dbpassword=dbpassword.decode('ascii','strict')
 
@@ -202,6 +201,7 @@ class Task:
                 return {
                     'message':{
                         'status': 'success',
+                        'task_fields': ['task_id','task','sort_index'],
                         'tasks': self.get_tasks()
                     }
                 }
@@ -262,8 +262,10 @@ class Task:
                 return {
                     'status': 'success',
                     'message':{
-                        'tasks': self.get_tasks()
-                    }
+                        'task_fields': ['task_id','task','sort_index'],
+                        'tasks': self.get_tasks(),
+                    },
+                    'code':200
                 }
             else:
                 abort(403)
